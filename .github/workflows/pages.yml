@@ -1,0 +1,47 @@
+name: Publish Atraro
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - atraro-github-pages-20261007.zip
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout public website package
+        uses: actions/checkout@v6
+      - name: Verify and extract website
+        run: |
+          echo '01faee59a58d2f0c9531dfce9e5e2c4ad58e6d2f0476c876512648a079003c5e  atraro-github-pages-20261007.zip' | sha256sum --check --strict
+          python3 -m zipfile -e atraro-github-pages-20261007.zip _site
+          test -f _site/index.html
+          test -f _site/.nojekyll
+          test "$(cat _site/CNAME)" = atraro.com
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Upload public website
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
