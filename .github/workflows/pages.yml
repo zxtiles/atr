@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - atraro-github-pages-20261007.zip
+      - atraro-github-pages-20261009.zip
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -28,20 +28,20 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout public website package
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Verify and extract website
         run: |
-          echo '01faee59a58d2f0c9531dfce9e5e2c4ad58e6d2f0476c876512648a079003c5e  atraro-github-pages-20261007.zip' | sha256sum --check --strict
-          python3 -m zipfile -e atraro-github-pages-20261007.zip _site
+          echo 'e8d323ce20a4d99255a1a500870a1a7a998ec621f8aca64f1a9d7664c2402da0  atraro-github-pages-20261009.zip' | sha256sum --check --strict
+          python3 -m zipfile -e atraro-github-pages-20261009.zip _site
           test -f _site/index.html
           test -f _site/.nojekyll
           test "$(cat _site/CNAME)" = atraro.com
       - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Upload public website
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: _site
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
